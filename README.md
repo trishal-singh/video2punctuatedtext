@@ -24,3 +24,6 @@ Change the filepath in main.py to reflect your video path.
 Run the program using:</br>
 python main.py
 
+# Output:
+
+![Output](output.png)
