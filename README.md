@@ -35,4 +35,4 @@ python main.py
 
 # Output:
 
-![Output](output.png)
+![Output](Screenshot.png)
