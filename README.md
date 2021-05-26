@@ -5,7 +5,16 @@ It is used to trancribe vdeos to punctuated text.
 # Step 1:
 Create a virtual environment with python 3.7.10 installed. If using anaconda then use the below command:</br>
 
-conda create --name env_name python=3.7.10
+conda create --name env_name python=3.7.10</br>
+Install the following packages:</br>
+torch</br>
+torchaudio</br>
+omegaconf</br>
+If using anaconda then the following commands should work:</br>
+conda install pytorch torchvision torchaudio cpuonly -c pytorch</br>
+conda install -c conda-forge omegaconf</br>
+
+
 # Step 2:
 Clone this repository
 
