@@ -24,7 +24,8 @@ Move inside the video2punctuatedtext folder
 # Step 4:
 Install the required libraries by using  the command:</br>
 
-pip install -r requirements.txt
+pip install -r requirements.txt</br>
+pip install git+https://github.com/NVIDIA/NeMo.git@$'main'
 
 # Step 5:
 Change the filepath in main.py to reflect your video path.
@@ -35,4 +36,4 @@ python main.py
 
 # Output:
 
-![Output](Screenshot.png)
+![Output](Output.png)
