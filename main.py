@@ -1,36 +1,42 @@
 from punctuator import Punctuator
 import moviepy.editor as mp
 import torch
-import zipfile
 import torchaudio
-from glob import glob
+import os
+import nemo.collections.asr as nemo_asr
+import contextlib
+
 
 def to_audio(video_file):
     clip = mp.VideoFileClip(video_file) 
  
     clip.audio.write_audiofile('audio.wav')
 
-def to_text():
-    device = torch.device('cpu')  # gpu also works, but our models are fast enough for CPU
-    model, decoder, utils = torch.hub.load(repo_or_dir='snakers4/silero-models',
-                                       model='silero_stt',
-                                       language='en', # also available 'de', 'es'
-                                       device=device)
-    (read_batch, split_into_batches,
-    read_audio, prepare_model_input) = utils  # see function signature for details
-
-# download a single file, any format compatible with TorchAudio
-#torch.hub.download_url_to_file('https://opus-codec.org/static/examples/samples/speech_orig.wav',
-                               #dst ='speech_orig.wav', progress=True)
-    test_files = glob('audio.wav') 
-    batches = split_into_batches(test_files, batch_size=10)
-    input = prepare_model_input(read_batch(batches[0]),
-                            device=device)
-
-    output = model(input)
-    text=""
-    for example in output:
-        text+=decoder(example.cpu())
+def change_samplerate():
+    y, sr = torchaudio.load('audio.wav')
+    y = y.mean(dim=0) # if there are multiple channels, average them to single channel
+    if sr != 16000:
+        resampler = torchaudio.transforms.Resample(sr, 16000)
+        y_resampled = resampler(y)
+    torchaudio.set_audio_backend(backend='sox')   
+    torchaudio.save(src=y_resampled,sample_rate=16000,filepath='sampled_audio.wav')
+    
+def to_text(audio_file):
+    # Helper for torch amp autocast
+    if torch.cuda.is_available():
+        autocast = torch.cuda.amp.autocast
+    else:
+        @contextlib.contextmanager
+        def autocast():
+            print("AMP was not available, using FP32!")
+            yield
+            
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model = nemo_asr.models.EncDecCTCModelBPE.from_pretrained("stt_en_citrinet_256", map_location=device)
+    model = model.to(device)
+    
+    with autocast():
+        text = model.transcribe([audio_file], batch_size=1)[0]
     return text
 
 def punctuate_text(text):
@@ -38,12 +44,12 @@ def punctuate_text(text):
     print(p.punctuate(text))
     
 def my_func(video_file):
-    print('Converting to audio.wav')
+    print('Converting to audio')
     to_audio(video_file)
-    print('Done')
-    print('Converting audio to text')
-    text=to_text()
-    
+    change_samplerate()
+    text=to_text('sampled_audio.wav')
+    os.remove('audio.wav')
+    os.remove('sampled_audio.wav')    
     print('Punctuating Text')
     punctuate_text(text)
 
