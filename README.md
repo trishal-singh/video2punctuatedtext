@@ -37,3 +37,14 @@ python main.py
 # Output:
 
 ![Output](Output.png)
+
+#Resources Used
+
+
+# Citrinet model by nvidia to convert speech to text
+https://colab.research.google.com/gist/titu1994/a44fffd459236988ee52079ff8be1d2e/long-audio-transcription-citrinet.ipynb?pli=1
+https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tlt-jarvis/models/speechtotext_english_citrinet
+# Punctuator to puctuate the text
+https://pypi.org/project/punctuator/ 
+
+https://github.com/ottokart/punctuator2
