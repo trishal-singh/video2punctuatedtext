@@ -25,7 +25,7 @@ Move inside the video2punctuatedtext folder
 Install the required libraries by using  the command:</br>
 
 pip install -r requirements.txt</br>
-pip install git+https://github.com/NVIDIA/NeMo.git@$'main'
+You also need to install nemo_asr (https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/main/asr/intro.html)
 
 # Step 5:
 Change the filepath in main.py to reflect your video path.
